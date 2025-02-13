@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
-    tre-cli-tools = {
+    tre-cli-tools-nixos = {
       url = "github:regular/tre-cli-tools-nixos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -16,7 +16,7 @@
   in {
     nixosModules.default = (import ./service.nix) self;
     packages = eachSystem ( { pkgs, system }: let 
-      cli-tools = inputs.tre-cli-tools.packages.${system}.default;
+      cli-tools = inputs.tre-cli-tools-nixos.packages.${system}.default;
       extraModulePath = "${cli-tools}/lib/node_modules/tre-cli-tools/node_modules";
     in {
       default = pkgs.buildNpmPackage rec {
@@ -54,7 +54,6 @@
           pkgs.nodejs
           pkgs.python3
           pkgs.typescript
-          #self.packages.${system}.default
         ];
       };
     });
