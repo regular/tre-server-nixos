@@ -46,6 +46,29 @@
           maintainers = [ "jan@lagomorph.de" ];
         };
       };
+      tre-creds = pkgs.buildNpmPackage rec {
+        pname = "tre-creds";
+        name = pname;
+
+        src = ./tre-creds;
+
+        npmDepsHash = "sha256-ddN3BxoZ+NaJydEDlf2k2pSw4towLBcixbWYyDud2d8=";
+        dontNpmBuild = true;
+
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+
+        postInstall = ''
+          wrapProgram $out/bin/${pname} \
+          --set SYSTEMD_CREDS ${pkgs.systemd}/bin/systemd-creds
+          '';
+
+        meta = {
+          description = "Create keypair and encrypt it along with shs.caps using systemd-creds";
+          license = pkgs.lib.licenses.mit;
+          mainProgram = pname;
+          maintainers = [ "jan@lagomorph.de" ];
+        };
+      };
     });
 
     devShells = eachSystem ( { pkgs, system, ... }: {
