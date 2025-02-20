@@ -25,8 +25,6 @@ let
 
         port = mkOption {
           type = types.port;
-          default = "";
-          defaultText = "";
           description = "TCP port to use";
         };
       };
@@ -41,8 +39,6 @@ let
 
         port = mkOption {
           type = types.port;
-          default = "";
-          defaultText = "";
           description = "TCP port to use for HTTI API/websockets";
         };
       };
@@ -73,7 +69,17 @@ in {
   };
 
    # Consume the submodule configurations
-  config = lib.mkIf (length (attrNames config.services.tre-server) > 0) {
+   config = let
+     credsPath = name: "/etc/tre-creds/${name}";
+   in lib.mkIf (length (attrNames config.services.tre-server) > 0) {
+
+    secrets = mapAttrs' (name: cfg: {
+      name = "tre-server-${name}";
+      value = {
+        path = credsPath name;
+      };
+    }) config.services.tre-server;
+
     users.groups = mapAttrs' (name: cfg: {
       name = "ssb-${name}";
       value = {};
@@ -103,7 +109,7 @@ in {
             Type = "notify";
             ExecStart = "${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}";
             WorkingDirectory = "/tmp";
-            LoadCredentialEncrypted = "${name}:/etc/tre-creds/${name}";
+            LoadCredentialEncrypted = "${name}:${credsPath name}";
             StandardOutput = "journal";
             StandardError = "journal";
 

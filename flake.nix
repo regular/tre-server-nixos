@@ -2,19 +2,42 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
+    secrets = {
+      url = "github:regular/secrets";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     tre-cli-tools-nixos = {
       url = "github:regular/tre-cli-tools-nixos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, systems, nixpkgs, ... }@inputs: let
+  outputs = { self, systems, secrets, nixpkgs, ... }@inputs: let
     eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f {
       inherit system;
       pkgs = nixpkgs.legacyPackages.${system};
     });
   in {
     nixosModules.default = (import ./service.nix) self;
+    nixosConfigurations.demo = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        self.nixosModules.default
+        secrets.nixosModules.secrets
+        {
+          services.tre-server.demo = {
+            enable = true;
+          };
+          secrets.tre-server-demo = {
+            source = {
+              vault = "TestVault";
+              item = "ssb/demo";
+              fields = [ "secrets.json" ];
+            };
+          };
+        }
+      ];
+    };
     packages = eachSystem ( { pkgs, system }: let 
       cli-tools = inputs.tre-cli-tools-nixos.packages.${system}.default;
       extraModulePath = "${cli-tools}/lib/node_modules/tre-cli-tools/node_modules";

@@ -2,11 +2,11 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1739214665,
-        "narHash": "sha256-26L8VAu3/1YRxS8MHgBOyOM8xALdo6N0I04PgorE7UM=",
+        "lastModified": 1739446958,
+        "narHash": "sha256-+/bYK3DbPxMIvSL4zArkMX0LQvS7rzBKXnDXLfKyRVc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "64e75cd44acf21c7933d61d7721e812eac1b5a0a",
+        "rev": "2ff53fe64443980e139eaa286017f53f88336dd0",
         "type": "github"
       },
       "original": {
@@ -19,8 +19,29 @@
     "root": {
       "inputs": {
         "nixpkgs": "nixpkgs",
+        "secrets": "secrets",
         "systems": "systems",
         "tre-cli-tools-nixos": "tre-cli-tools-nixos"
+      }
+    },
+    "secrets": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1739563841,
+        "narHash": "sha256-LnFJuyJsvAysoJ5O/XFx7fUOfNHa1sDplkMt32O/IOo=",
+        "owner": "regular",
+        "repo": "secrets",
+        "rev": "2bd41f306745090e9008deb4cdbd622dd5e41368",
+        "type": "github"
+      },
+      "original": {
+        "owner": "regular",
+        "repo": "secrets",
+        "type": "github"
       }
     },
     "systems": {
