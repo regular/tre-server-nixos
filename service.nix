@@ -82,7 +82,7 @@ in {
 
     users.groups = mapAttrs' (name: cfg: {
       name = "ssb-${name}";
-      value = {};
+      value.members = [ "root" ];
     }) config.services.tre-server;
 
     systemd.services = mapAttrs' (name: cfg:
