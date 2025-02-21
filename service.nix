@@ -8,6 +8,13 @@ let
     options = {
       enable = mkEnableOption "ssb/tre pub server (sbot)";
 
+      allowedUsers = mkOption {
+        type = types.listOf types.str;
+        default = [ "root" ];
+        defaultText = literalExpression "[ \"root\" ]";
+        description = "Members of the group that owns the controlling unix socket";
+      };
+
       package = mkOption {
         type = types.package;
         default = self.packages.${pkgs.stdenv.system}.default;
@@ -82,7 +89,7 @@ in {
 
     users.groups = mapAttrs' (name: cfg: {
       name = "ssb-${name}";
-      value.members = [ "root" ];
+      value.members = cfg.allowedUsers;
     }) config.services.tre-server;
 
     systemd.services = mapAttrs' (name: cfg:

@@ -27,6 +27,7 @@
         {
           services.tre-server.demo = {
             enable = true;
+            allowedUsers = [ "demo-user" ];
           };
           secrets.tre-server-demo = {
             source = {
