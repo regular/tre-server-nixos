@@ -6,13 +6,17 @@
       url = "github:regular/secrets";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    initial-states = {
+      url = "github:regular/initial-states";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     tre-cli-tools-nixos = {
       url = "github:regular/tre-cli-tools-nixos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, systems, secrets, nixpkgs, ... }@inputs: let
+  outputs = { self, systems, secrets, initial-states, nixpkgs, ... }@inputs: let
     eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f {
       inherit system;
       pkgs = nixpkgs.legacyPackages.${system};
@@ -23,10 +27,15 @@
       system = "x86_64-linux";
       modules = [
         self.nixosModules.default
-        secrets.nixosModules.secrets
+        secrets.nixosModules.default
+        initial-states.nixosModules.default
         {
           services.tre-server.demo = {
             enable = true;
+            tcp.port = 1;
+            tcp.host = "local";
+            http.port = 2;
+            http.host = "none";
             allowedUsers = [ "demo-user" ];
           };
           secrets.tre-server-demo = {
@@ -34,6 +43,13 @@
               vault = "TestVault";
               item = "ssb/demo";
               fields = [ "secrets.json" ];
+            };
+          };
+          initial-states.tre-server-demo = {
+            source = {
+              vault = "TestVault";
+              item = "ssb/demo";
+              field = "initial-state";
             };
           };
         }

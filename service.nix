@@ -78,12 +78,23 @@ in {
    # Consume the submodule configurations
    config = let
      credsPath = name: "/etc/tre-creds/${name}";
+     runtimePath = name: "tre-server/${name}";
+     rpcSocketPath = name: "/var/run/${runtimePath name}"; # NOTE: no filename
+     initSocketPath = name: "/var/run/${runtimePath name}/initial-state.socket";
+     receive-initial-state = "${self.inputs.initial-states.packages.${pkgs.stdenv.system}.receive-initial-state}/bin/receive-initial-state";
    in lib.mkIf (length (attrNames config.services.tre-server) > 0) {
 
     secrets = mapAttrs' (name: cfg: {
       name = "tre-server-${name}";
       value = {
         path = credsPath name;
+      };
+    }) config.services.tre-server;
+
+    initial-states = mapAttrs' (name: cfg: {
+      name = "tre-server-${name}";
+      value = {
+        socketPath = initSocketPath name;
       };
     }) config.services.tre-server;
 
@@ -95,7 +106,7 @@ in {
     systemd.services = mapAttrs' (name: cfg:
       #lib.mkIf cfg.enable {
       let
-        globalOpts = "--config %d/${name} --appname ${name} --path $STATE_DIRECTORY --socketPath $RUNTIME_DIRECTORY";
+        globalOpts = "--config %d/${name} --appname ${name} --path $STATE_DIRECTORY --socketPath ${rpcSocketPath name}";
         tcpOpts = "--host ${cfg.tcp.host} --port ${toString cfg.tcp.port}"; 
         wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
         blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
@@ -114,6 +125,7 @@ in {
 
           serviceConfig = {
             Type = "notify";
+            ExecStartPre = "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY";
             ExecStart = "${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}";
             WorkingDirectory = "/tmp";
             LoadCredentialEncrypted = "${name}:${credsPath name}";
@@ -128,7 +140,7 @@ in {
               "${pkgs.coreutils}/bin/chgrp -R ${group} \${RUNTIME_DIRECTORY}"
             ];
 
-            RuntimeDirectory = "tre-server/${name}";
+            RuntimeDirectory = runtimePath name;
             StateDirectory = "tre-server/${name}";
             Environment = [
               "DEBUG=multiserver*,tre-cli-server:*"
