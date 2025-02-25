@@ -82,6 +82,7 @@ in {
      rpcSocketPath = name: "/var/run/${runtimePath name}"; # NOTE: no filename
      initSocketPath = name: "/var/run/${runtimePath name}/initial-state.socket";
      receive-initial-state = "${self.inputs.initial-states.packages.${pkgs.stdenv.system}.receive-initial-state}/bin/receive-initial-state";
+     requiredFiles = [ "flume/offset.log" ];
    in lib.mkIf (length (attrNames config.services.tre-server) > 0) {
 
     secrets = mapAttrs' (name: cfg: {
@@ -95,6 +96,7 @@ in {
       name = "tre-server-${name}";
       value = {
         socketPath = initSocketPath name;
+        inherit requiredFiles;
       };
     }) config.services.tre-server;
 
@@ -110,6 +112,7 @@ in {
         tcpOpts = "--host ${cfg.tcp.host} --port ${toString cfg.tcp.port}"; 
         wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
         blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
+        receiveInitStateOpts = builtins.concatStringsSep " " (builtins.map (x: "--requiredFile '${x}'") requiredFiles);
         group = "ssb-${name}";
       in {
         name = "tre-server-${name}";
@@ -125,7 +128,8 @@ in {
 
           serviceConfig = {
             Type = "notify";
-            ExecStartPre = "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY";
+            TimeoutStartSec="60min";
+            ExecStartPre = "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY ${receiveInitStateOpts}";
             ExecStart = "${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}";
             WorkingDirectory = "/tmp";
             LoadCredentialEncrypted = "${name}:${credsPath name}";
