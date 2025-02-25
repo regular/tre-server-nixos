@@ -82,7 +82,7 @@ in {
      rpcSocketPath = name: "/var/run/${runtimePath name}"; # NOTE: no filename
      initSocketPath = name: "/var/run/${runtimePath name}/initial-state.socket";
      receive-initial-state = "${self.inputs.initial-states.packages.${pkgs.stdenv.system}.receive-initial-state}/bin/receive-initial-state";
-     requiredFiles = [ "flume/offset.log" ];
+     requiredFiles = [ "flume/log.offset" ];
    in lib.mkIf (length (attrNames config.services.tre-server) > 0) {
 
     secrets = mapAttrs' (name: cfg: {
