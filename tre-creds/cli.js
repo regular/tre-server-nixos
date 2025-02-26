@@ -5,7 +5,7 @@ const {generate} = require('ssb-keys')
 const conf = require('minimist')(process.argv.slice(2))
 
 if (conf._.length < 1) {
-  console.error(`Usage: tre-creds NETWORK_NAME [--caps NETWORK_CAPS] [--keys SECRET_KEYFILE] --authority`)
+  console.error(`Usage: tre-creds NETWORK_NAME [--caps NETWORK_CAPS] [--keys SECRET_KEYFILE] --authority --print`)
   process.exit(1)
 }
 const [name] = conf._
@@ -44,8 +44,10 @@ const secret = {
   keys
 }
 
-//console.dir(secret)
-//process.exit(0)
+if (conf.print) {
+  console.log(JSON.stringify(secret, null, 2))
+  process.exit(0)
+}
 
 const outPath = `/etc/tre-creds/${name}`
 const {SYSTEMD_CREDS} = process.env
