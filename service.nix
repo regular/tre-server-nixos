@@ -131,7 +131,7 @@ in {
 
           serviceConfig = {
             Type = "notify";
-            ExecStart = "${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}";
+            ExecStart = "${pkgs.bash}/bin/bash -eu -c ${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}";
             WorkingDirectory = "/tmp";
             LoadCredentialEncrypted = "${name}:${credsPath name}";
             StandardOutput = "journal";
