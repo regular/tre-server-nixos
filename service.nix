@@ -112,8 +112,11 @@ in {
         tcpOpts = "--host ${cfg.tcp.host} --port ${toString cfg.tcp.port}"; 
         wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
         blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
-        receiveInitStateOpts = builtins.concatStringsSep " " (builtins.map (x: "--requiredFile '${x}'") requiredFiles);
         group = "ssb-${name}";
+        
+        requiresFiles = (builtins.length config.initial-states."tre-server-${name}".requiredFiles) != 0;
+        receiveInitStateOpts = builtins.concatStringsSep " " (builtins.map (x: "--requiredFile '${x}'") requiredFiles);
+        ExecReceiveInitState = if requiresFiles then "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY ${receiveInitStateOpts} && " else "";
       in {
         name = "tre-server-${name}";
         value = {
@@ -128,9 +131,7 @@ in {
 
           serviceConfig = {
             Type = "notify";
-            TimeoutStartSec="60min";
-            ExecStartPre = "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY ${receiveInitStateOpts}";
-            ExecStart = "${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}";
+            ExecStart = "${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}";
             WorkingDirectory = "/tmp";
             LoadCredentialEncrypted = "${name}:${credsPath name}";
             StandardOutput = "journal";
