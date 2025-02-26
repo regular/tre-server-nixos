@@ -130,7 +130,10 @@ in {
           };
 
           serviceConfig = {
+            # NOTE: this causes switching of configs to hang until the state is received
             Type = "notify";
+            NotifyAccess = "all"; # tre-server is a child of bash
+            TimeoutStartSec="60min";
             ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}\"";
             WorkingDirectory = "/tmp";
             LoadCredentialEncrypted = "${name}:${credsPath name}";
