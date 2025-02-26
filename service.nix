@@ -151,7 +151,7 @@ in {
             RuntimeDirectory = runtimePath name;
             StateDirectory = "tre-server/${name}";
             Environment = [
-              "DEBUG=receive_state,multiserver*,tre-cli-server:*"
+              "DEBUG=multiserver*,tre-cli-server:*"
             ];
           };
         };
