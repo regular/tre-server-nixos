@@ -85,6 +85,10 @@ in {
      requiredFiles = [ "flume/log.offset" ];
    in lib.mkIf (length (attrNames config.services.tre-server) > 0) {
 
+     environment.systemPackages = [
+        self.packages.${pkgs.stdenv.system}.trectl
+     ];
+
     secrets = mapAttrs' (name: cfg: {
       name = "tre-server-${name}";
       value = {
