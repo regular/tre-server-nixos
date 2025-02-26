@@ -86,6 +86,32 @@
           maintainers = [ "jan@lagomorph.de" ];
         };
       };
+      trectl = pkgs.buildNpmPackage rec {
+        pname = "trectl";
+        name = pname;
+
+        src = ./trectl;
+
+        npmDepsHash = "sha256-2niv+CJAolNAugdf+sn9m9Z4gfqHQyWQsfKJTWNc3g0=";
+        dontNpmBuild = true;
+
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+
+        postBuild = ''
+          mkdir -p $out/lib/node_modules/${pname}
+          cat <<EOF > $out/lib/node_modules/${pname}/extra-modules-path.js
+          process.env.NODE_PATH += ':${extraModulePath}' 
+          require('module').Module._initPaths()
+          EOF
+        '';
+
+        meta = {
+          description = "diagnose tre-server issues (WIP)";
+          license = pkgs.lib.licenses.mit;
+          mainProgram = pname;
+          maintainers = [ "jan@lagomorph.de" ];
+        };
+      };
       tre-creds = pkgs.buildNpmPackage rec {
         pname = "tre-creds";
         name = pname;

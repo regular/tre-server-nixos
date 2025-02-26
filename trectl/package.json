@@ -1,0 +1,22 @@
+{
+  "name": "trectl",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "trectl": "bin/trectl.js"
+  },
+  "keywords": [],
+  "author": "Jan Bölsche <jan@lagomorph.de> (http://regular.codes/)",
+  "license": "All rihts reserved",
+  "description": "",
+  "dependencies": {
+    "bl": "^6.0.8",
+    "chalk": "^4.x.x",
+    "debug": "^4.3.7",
+    "pull-file": "^1.1.0",
+    "pull-stdio": "^1.0.0",
+    "rc": "^1.2.8"
+  }
+}
