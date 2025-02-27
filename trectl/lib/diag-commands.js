@@ -1,5 +1,6 @@
 const {promisify} = require('util')
 const debug = require('debug')('provctli:org')
+const {DateTime} = require('luxon')
 const chalk = require('chalk');
 const pull = require('pull-stream')
 const file = require('pull-file')
@@ -37,7 +38,7 @@ module.exports = function makeCommands(argv, ssb, ssb_config) {
 
   async function log() {
     const live = argv.follow
-    const {reverse, type, since, until, limit} = argv
+    const {reverse, type, since, until, limit, comment} = argv
 
     const opts = {live, reverse, limit}
     if (since) opts.gte = since
@@ -50,7 +51,14 @@ module.exports = function makeCommands(argv, ssb, ssb_config) {
         source,
         pull.drain( kv=>{
           if (kv.sync) return
-          console.log(JSON.stringify(kv, null, 2))
+            let j = JSON.stringify(kv, null, 2)
+            if (comment) {
+              j = j.replace(/\s*\"timestamp\":\s+([0-9.]+),?/g, (x,y)=>{
+                const s = DateTime.fromMillis(Number(y)).toString() 
+                return `${x} // ${s}`
+              })
+            }
+            console.log(j)
         }, err => {
           if (err) return reject(err)
           resolve()

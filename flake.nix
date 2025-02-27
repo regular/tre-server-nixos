@@ -92,7 +92,7 @@
 
         src = ./trectl;
 
-        npmDepsHash = "sha256-2niv+CJAolNAugdf+sn9m9Z4gfqHQyWQsfKJTWNc3g0=";
+        npmDepsHash = "sha256-mloG+cmKVuBFYfaGLiIwD008AGlfalQUdbrP29Euwe4=";
         dontNpmBuild = true;
 
         nativeBuildInputs = [ pkgs.makeWrapper ];
