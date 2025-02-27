@@ -26,7 +26,7 @@ module.exports = function(socketPath, cb) {
         {manifest} 
       ), (err, ssb) => {
         if (err) return cb(err)
-        cb(null, ssb)
+        cb(null, ssb, conf)
       })
     })
   })

@@ -1,12 +1,62 @@
+const {promisify} = require('util')
 const debug = require('debug')('provctli:org')
 const chalk = require('chalk');
 const pull = require('pull-stream')
 const file = require('pull-file')
 const {stdin} = require('pull-stdio')
 
-module.exports = function makeCommands(argv, ssb) {
+module.exports = function makeCommands(argv, ssb, ssb_config) {
   return {
-    whoami
+    config: ()=>ssb_config,
+    whoami,
+    log,
+    types,
+    manifest,
+    address,
+    help: promisify(ssb.help),
+    status: promisify(ssb.status),
+    progress: promisify(ssb.progress),
+    version: promisify(ssb.version)
+  }
+
+  async function types() {
+    return new Promise( (resolve, reject) => {
+      pull(
+        ssb.createLogStream({keys: false}),
+        pull.map( ({content})=>content.type),
+        pull.unique(),
+        pull.drain( t =>{
+          console.log(t)
+        }, err => {
+          if (err) return reject(err)
+          resolve()
+        })
+      )
+    })
+  }
+
+  async function log() {
+    const live = argv.follow
+    const {reverse, type, since, until, limit} = argv
+
+    const opts = {live, reverse, limit}
+    if (since) opts.gte = since
+    if (until) opts.lt = until
+
+    const source = type ? ssb.messagesByType(type, opts) : ssb.createLogStream(opts)
+
+    return new Promise( (resolve, reject) => {
+      pull(
+        source,
+        pull.drain( kv=>{
+          if (kv.sync) return
+          console.log(JSON.stringify(kv, null, 2))
+        }, err => {
+          if (err) return reject(err)
+          resolve()
+        })
+      )
+    })
   }
 
   async function whoami() {
@@ -17,6 +67,28 @@ module.exports = function makeCommands(argv, ssb) {
       })
     })
   }
+
+  async function address() {
+    const scopes = 'device local private public'.split(' ')
+    return Promise.all(scopes.map(scope=>{
+      return new Promise( (resolve, reject) => {
+        ssb.multiserver.address( 'device', (err, result)=>{
+          if (err) return reject(err)
+          resolve({[scope]: result})
+        })
+      })
+    }))
+  }
+
+  async function manifest() {
+    return new Promise( (resolve, reject) => {
+      ssb.manifest( (err, result)=>{
+        if (err) return reject(err)
+        resolve(result)
+      })
+    })
+  }
+
 }
 
 // -- util

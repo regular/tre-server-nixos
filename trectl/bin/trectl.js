@@ -1,5 +1,6 @@
 require('../extra-modules-path')
 
+const {inspect} = require('util')
 const fs = require('fs')
 const {resolve, join} = require('path')
 const debug = require('debug')('trectl')
@@ -18,10 +19,12 @@ if (!argv.socketPath) {
 main(argv)
 
 async function main(argv) {
-  const ssb = await SSB()
+  const r = await SSB()
+  const ssb = r.api
+  const ssb_config = r.conf
 
   const commands = Object.assign({},
-    diagCommands(argv, ssb),
+    diagCommands(argv, ssb, ssb_config),
   )
 
   const command = argv._[0]
@@ -33,7 +36,7 @@ async function main(argv) {
 
   try {
     const result = await commands[command](argv)
-    console.log(result)
+    console.log(inspect(result, {color: true, depth: 10}))
   } catch(err) {
     bail_if(err)
   } finally {
@@ -43,9 +46,9 @@ async function main(argv) {
 
 function SSB() {
   return new Promise( (resolve, reject) => {
-    SSBClient(`${argv.socketPath}/socket`, (err, api) => {
+    SSBClient(`${argv.socketPath}/socket`, (err, api, conf) => {
       if (err) return reject(err)
-      resolve(api)
+      resolve({api, conf})
     })
   })
 }
