@@ -140,6 +140,7 @@ in {
             TimeoutStartSec="180min";
             ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}\"";
             WorkingDirectory = "/tmp";
+            TemporaryFileSystem = "/tmp:size=40G";
             LoadCredentialEncrypted = "${name}:${credsPath name}";
             StandardOutput = "journal";
             StandardError = "journal";
