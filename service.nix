@@ -112,7 +112,7 @@ in {
     systemd.services = mapAttrs' (name: cfg:
       #lib.mkIf cfg.enable {
       let
-        globalOpts = "--config %d/${name} --appname ${name} --path $STATE_DIRECTORY --socketPath ${rpcSocketPath name}";
+        globalOpts = "--config %d/${name} --appname ${name} --path $STATE_DIRECTORY/ssb --socketPath ${rpcSocketPath name}";
         tcpOpts = "--host ${cfg.tcp.host} --port ${toString cfg.tcp.port}"; 
         wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
         blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
@@ -120,7 +120,7 @@ in {
         
         requiresFiles = (builtins.length config.initial-states."tre-server-${name}".requiredFiles) != 0;
         receiveInitStateOpts = builtins.concatStringsSep " " (builtins.map (x: "--requiredFile '${x}'") requiredFiles);
-        ExecReceiveInitState = if requiresFiles then "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY ${receiveInitStateOpts} && " else "";
+        ExecReceiveInitState = if requiresFiles then "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY/ssb --tmpPath=$STATE_DIRECTORY/tmp ${receiveInitStateOpts} && " else "";
       in {
         name = "tre-server-${name}";
         value = {
