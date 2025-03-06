@@ -11,6 +11,7 @@ module.exports = function makeCommands(argv, ssb, ssb_config) {
     config: ()=>ssb_config,
     whoami,
     log,
+    rebuild: promisify(ssb.rebuild),
     types,
     manifest,
     address,
