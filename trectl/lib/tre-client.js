@@ -1,5 +1,5 @@
 const ssbClient = require('ssb-client')
-const debug = require('debug')('provisioner:tre-client')
+const debug = require('debug')('trectl:tre-client')
 
 module.exports = function(socketPath, cb) {
   const remote = `unix:${socketPath}~noauth`

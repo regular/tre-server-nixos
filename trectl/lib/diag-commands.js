@@ -47,21 +47,24 @@ module.exports = function makeCommands(argv, ssb, ssb_config) {
     const source = type ? ssb.messagesByType(type, opts) : ssb.createLogStream(opts)
 
     return new Promise( (resolve, reject) => {
+      let count = 0;
       pull(
         source,
         pull.drain( kv=>{
           if (kv.sync) return
-            let j = JSON.stringify(kv, null, 2)
-            if (comment) {
-              j = j.replace(/\s*\"timestamp\":\s+([0-9.]+),?/g, (x,y)=>{
-                const s = DateTime.fromMillis(Number(y)).toString() 
-                return `${x} // ${s}`
-              })
-            }
-            console.log(j)
+          count++
+          let j = JSON.stringify(kv, null, 2)
+          if (comment) {
+            j = j.replace(/\s*\"timestamp\":\s+([0-9.]+),?/g, (x,y)=>{
+              const s = DateTime.fromMillis(Number(y)).toString() 
+              return `${x} // ${s}`
+            })
+          }
+          console.log(j)
+          console.log()
         }, err => {
           if (err) return reject(err)
-          resolve()
+          resolve(count)
         })
       )
     })

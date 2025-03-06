@@ -29,8 +29,8 @@ async function main(argv) {
 
   const command = argv._[0]
   if (!command || !commands[command]) {
-    console.error(`Valid subcommands:
-    `)
+    console.error(`Valid subcommands are:
+    ${Object.keys(commands).join(', ')} `)
     process.exit(2)
   }
 
