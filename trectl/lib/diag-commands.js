@@ -1,5 +1,5 @@
 const {promisify} = require('util')
-const debug = require('debug')('provctli:org')
+const debug = require('debug')('trectl:diag')
 const {DateTime} = require('luxon')
 const chalk = require('chalk');
 const pull = require('pull-stream')
@@ -38,13 +38,24 @@ module.exports = function makeCommands(argv, ssb, ssb_config) {
 
   async function log() {
     const live = argv.follow
-    const {reverse, type, since, until, limit, comment} = argv
+    const {reverse, type, since, until, limit, comment, raw} = argv
 
     const opts = {live, reverse, limit}
     if (since) opts.gte = since
     if (until) opts.lt = until
 
-    const source = type ? ssb.messagesByType(type, opts) : ssb.createLogStream(opts)
+    let source
+    if (raw) {
+      console.error('Reading from createRawLogStream')
+      source = ssb.createRawLogStream(opts)
+    } else if (type) {
+      console.error('Reading from messagesByType')
+      source = ssb.messagesByType(type, opts)
+    } else {
+      console.error('Reading from createLogStream')
+      source = ssb.createLogStream(opts)
+    }
+    debug('opts: %O', opts)
 
     return new Promise( (resolve, reject) => {
       let count = 0;
