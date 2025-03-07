@@ -8,7 +8,7 @@ const {stdin} = require('pull-stdio')
 
 module.exports = function makeCommands(argv, ssb, ssb_config) {
   return {
-    config: ()=>ssb_config,
+    config: promisify(ssb.getConfig),
     whoami,
     log,
     rebuild: promisify(ssb.rebuild),

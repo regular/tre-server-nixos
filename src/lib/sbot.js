@@ -25,6 +25,22 @@ module.exports = function(config, keys, cb) {
         })
       }
     })
+    .use({
+      manifest: {
+        getConfig: 'sync'
+      },
+      permissions: {
+        anonymous: { allow: [], deny: null }
+      },
+      init: function (api, config) {
+        return {
+          getConfig: () => {
+            const ret = Object.assign({}, config, {keys: {}})
+            return ret
+          }
+        }
+      }
+    })
     /*.use({
       manifest: {getAddress: "sync"},
       init: ssb => ({getAddress: scope => ssb.multiserver.address(scope)})
@@ -71,3 +87,4 @@ function toSodiumKeys (keys) {
     secretKey: toBuffer(keys.private)
   }
 }
+
