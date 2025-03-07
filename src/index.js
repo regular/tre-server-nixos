@@ -15,19 +15,21 @@ module.exports = function(argv, cb) {
     const keys = conf.keys 
     delete conf.keys
 
+    conf.ws = conf.ws || {}
+
     conf.connections = {
       outgoing: {
         net: [{transform: "shs"}]
       },
       incoming: {
-        net: [{
+        net: conf.host ? [{
           host: conf.host,
           port: conf.port,
           scope: "local",
           transform: "shs"
-        }],
+        }] : [],
     
-        ws: [{host: conf.ws.host, port: conf.ws.port, scope: "device", transform: "shs"}],
+        ws: conf.ws.host ? [{host: conf.ws.host, port: conf.ws.port, scope: "device", transform: "shs"}] : [],
         unix: conf.socketPath ? [{path: conf.socketPath, scope: "device", transform: "noauth"}] : []
       }
     }
