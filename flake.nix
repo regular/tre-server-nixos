@@ -22,7 +22,13 @@
       pkgs = nixpkgs.legacyPackages.${system};
     });
   in {
-    nixosModules.default = (import ./service.nix) self;
+    nixosModules.default = {
+      imports = [
+        (import (./static.nix) self)
+        (import (./options.nix) self)
+        (import (./service.nix) self)
+      ];
+    };
     nixosConfigurations.demo = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
