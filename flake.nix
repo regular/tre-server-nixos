@@ -43,6 +43,10 @@
             http.port = 2;
             http.host = "none";
             allowedUsers = [ "demo-user" ];
+            authorizedKeys."@/nvJmHAkcuDSMP0bEjnCyWKFKk7rcvApVGTp4WnjaOs=.ed25519" = [
+              "manifest"
+              "getConfig"
+            ];
           };
           secrets.tre-server-demo = {
             source = {

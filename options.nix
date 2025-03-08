@@ -14,6 +14,14 @@ let
         description = "Members of the group that owns the controlling unix socket";
       };
 
+      authorizedKeys = mkOption {
+        type = types.attrsOf (types.listOf types.str);
+        default = { };
+        description = "Map of remote public keys to list of allowed muxrpc method paths (dot separated paths)";
+        #check = value: builtins.all (k: builtins.match "^@.*.ed25519$" k != null)
+        #  (builtins.attrNames value);
+      };
+
       package = mkOption {
         type = types.package;
         default = self.packages.${pkgs.stdenv.system}.default;
@@ -66,10 +74,13 @@ let
       };
     };
   };
+
 in {
+
   options.services.tre-server = mkOption {
     type = types.attrsOf (types.submodule serverInstance);
     default = {};
     description = "Named instances of tre-server";
   };
+
 }
