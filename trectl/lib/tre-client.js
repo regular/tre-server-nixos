@@ -1,16 +1,15 @@
 const ssbClient = require('ssb-client')
 const debug = require('debug')('trectl:tre-client')
 
-module.exports = function(socketPath, cb) {
-  const remote = `unix:${socketPath}~noauth`
+module.exports = function(remote, config, cb) {
   debug(`remote: ${remote}`)
-  const keys = {
+  const keys = config.keys || {
     public: 'foobaz',
     private: 'foobaz'
   }
   const conf = {
     remote,
-    caps: {shs: 'foobar'},
+    caps: {shs: config.network ? capsFromNetwork(config.network) : 'foobar'},
     manifest: {manifest: 'async'}
   }
 
@@ -30,4 +29,14 @@ module.exports = function(socketPath, cb) {
       })
     })
   })
+}
+
+// --
+
+function capsFromNetwork(n) {
+  if (n[0] !== '*') throw new Error('Malformed natwork')
+  n = n.slice(1)
+  const [caps, postfix] = n.split('.')
+  if (Buffer.from(caps, 'base64').length !== 32) throw new Error('Malformed network')
+  return caps
 }

@@ -1,18 +1,16 @@
 #!/usr/bin/node
-
 require('./extra-modules-path')
+
+const fs = require('fs')
+const {join} = require('path')
+const sdNotify = require('sd-notify-lite')
+//const journal = new (require('systemd-journald'))({syslog_identifier: 'tre-server'})
 
 const argv = require('minimist')(process.argv.slice(2))
 if (!process.env.DEBUG && argv._.length == 0) {
   process.env.DEBUG='multiserver*,tre-server:*'
 }
-const fs = require('fs')
-const {join} = require('path')
-const {spawn} = require('child_process')
-const sdNotify = require('sd-notify-lite')
 const debug = require('debug')('tre-server:bin')
-//const journal = new (require('systemd-journald'))({syslog_identifier: 'tre-server'})
-
 debug('parsed command line arguments: %O', argv)
 
 if (argv._.length > 0) {

@@ -12,8 +12,8 @@ const argv = require('rc')('trectl', {})
 
 debug('argv is %O', argv)
 
-if (!argv.socketPath) {
-  bail_if(new Error('socketPath not specified'))
+if (!argv.socketPath && !(argv.remote && argv.network)) {
+  bail_if(new Error('Either --remote or --socketPath and --network must be specified'))
 }
 
 main(argv)
@@ -46,7 +46,8 @@ async function main(argv) {
 
 function SSB() {
   return new Promise( (resolve, reject) => {
-    SSBClient(`${argv.socketPath}/socket`, (err, api, conf) => {
+    const remote = argv.remote || `unix:${argv.socketPath}~noauth`
+    SSBClient(remote, argv, (err, api, conf) => {
       if (err) return reject(err)
       resolve({api, conf})
     })
