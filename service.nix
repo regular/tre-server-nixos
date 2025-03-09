@@ -46,6 +46,11 @@ in with lib; {
       requiresFiles = (builtins.length config.initial-states."tre-server-${name}".requiredFiles) != 0;
       receiveInitStateOpts = builtins.concatStringsSep " " (builtins.map (x: "--requiredFile '${x}'") requiredFiles);
       ExecReceiveInitState = if requiresFiles then "${receive-initial-state} server --socketPath ${initSocketPath name} --statePath $STATE_DIRECTORY/ssb --tmpPath=$STATE_DIRECTORY/tmp ${receiveInitStateOpts} && " else "";
+
+      allowedMethods = key: (builtins.concatStringsSep "," cfg.authorizedKeys.${key});
+      keys = builtins.attrNames cfg.authorizedKeys;
+      keyOpt = key: "--authorizedKeys '${key}:" + (allowedMethods key) + "'";
+      keyOpts = builtins.concatStringsSep " " (map keyOpt keys);
     in {
       name = "tre-server-${name}";
       value = {
@@ -63,7 +68,7 @@ in with lib; {
           Type = "notify";
           NotifyAccess = "all"; # tre-server is a child of bash
           TimeoutStartSec="180min";
-          ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts}\"";
+          ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts} ${keyOpts}\"";
           WorkingDirectory = "/tmp";
           LoadCredentialEncrypted = "${name}:${credsPath name}";
           StandardOutput = "journal";
