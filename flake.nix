@@ -40,6 +40,7 @@
             enable = true;
             tcp.port = 1;
             tcp.host = "local";
+            tcp.fqdn = "pub.example.com";
             http.port = 2;
             http.host = "none";
             allowedUsers = [ "demo-user" ];

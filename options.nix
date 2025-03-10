@@ -37,6 +37,13 @@ let
           description = "TCP host/address to bind to";
         };
 
+        fqdn = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          defaultText = "null";
+          description = "Fully qualified domain name, if tcp server should be publicly visible, null (is default) otherwise";
+        };
+
         port = mkOption {
           type = types.port;
           description = "TCP port to use";

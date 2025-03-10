@@ -38,7 +38,7 @@ in with lib; {
 
     systemd.services = mapAttrs' (name: cfg: let
       globalOpts = "--config %d/${name} --appname ${name} --path $STATE_DIRECTORY/ssb --socketPath ${rpcSocketPath name}";
-      tcpOpts = "--host ${cfg.tcp.host} --port ${toString cfg.tcp.port}"; 
+      tcpOpts = "--host ${cfg.tcp.host} --port ${toString cfg.tcp.port}" + optionalString (cfg.tcp.fqdn != null) " --fqdn ${cfg.tcp.fqdn}"; 
       wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
       blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
       group = "ssb-${name}";

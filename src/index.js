@@ -22,10 +22,11 @@ module.exports = function(argv, cb) {
         net: [{transform: "shs"}]
       },
       incoming: {
-        net: conf.host ? [{
+        net: conf.host || conf.fqdn ? [{
           host: conf.host,
           port: conf.port,
-          scope: "local",
+          scope: conf.fqdn ? "public" : "local",
+          extern: conf.fqdn,
           transform: "shs"
         }] : [],
     
