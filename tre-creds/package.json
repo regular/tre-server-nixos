@@ -14,6 +14,7 @@
   "description": "",
   "dependencies": {
     "minimist": "^1.2.8",
+    "rc": "^1.2.8",
     "ssb-keys": "^8.5.0"
   }
 }

@@ -2,7 +2,7 @@ const fs = require('fs')
 const crypto = require('crypto')
 const {spawnSync} = require('child_process')
 const {generate} = require('ssb-keys')
-const conf = require('minimist')(process.argv.slice(2))
+const conf = require('rc')('tre_creds')
 
 if (conf._.length < 1) {
   console.error(`Usage: tre-creds NETWORK_NAME [--caps NETWORK_CAPS] [--keys SECRET_KEYFILE] --authority --print`)
@@ -10,8 +10,8 @@ if (conf._.length < 1) {
 }
 const [name] = conf._
 let {caps, keys, authority} = conf
-let network = caps
-if (keys) {
+let network
+if (keys && typeof keys == 'string') {
   try {
     keys = JSON.parse(fs.readFileSync(keys))
   } catch(err) {
@@ -20,10 +20,12 @@ if (keys) {
   }
 }
 
-if (!keys) {
+if (!keys || conf['new-keys']) {
   keys = generate()
   console.error(`Generated new keypair. Public key: ${keys.id}`)
 }
+
+if (caps.shs) caps = caps.shs
 
 if (!caps) {
   if (authority) {
@@ -36,13 +38,16 @@ if (!caps) {
     network = caps + '.random'
     console.error(`Generated new random network id (caps value): ${caps}`)
   }
+} else {
+  network = conf.network || caps
 }
 
 const secret = {
   appname: name,
-  network: `*${network}`,
+  network: `${network[0]!=='*' ? '*' : ''}${network}`,
   caps: { shs: caps, },
-  keys
+  keys,
+  remote: conf.remote
 }
 
 if (conf.print) {

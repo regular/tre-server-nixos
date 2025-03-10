@@ -129,7 +129,7 @@
 
         src = ./tre-creds;
 
-        npmDepsHash = "sha256-ddN3BxoZ+NaJydEDlf2k2pSw4towLBcixbWYyDud2d8=";
+        npmDepsHash = "sha256-4XNe8tRaTRh6RgzDKBJNet1HqpOM9tXVMPCb24DsKnM=";
         dontNpmBuild = true;
 
         nativeBuildInputs = [ pkgs.makeWrapper ];
