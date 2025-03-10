@@ -39,6 +39,7 @@ if (!caps) {
 }
 
 const secret = {
+  appname: name,
   network: `*${network}`,
   caps: { shs: caps, },
   keys
