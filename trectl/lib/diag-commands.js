@@ -95,7 +95,7 @@ module.exports = function makeCommands(argv, ssb, ssb_config) {
     const scopes = 'device local private public'.split(' ')
     return Promise.all(scopes.map(scope=>{
       return new Promise( (resolve, reject) => {
-        ssb.multiserver.address( 'device', (err, result)=>{
+        ssb.multiserver.address( scope, (err, result)=>{
           if (err) return reject(err)
           resolve({[scope]: result})
         })
