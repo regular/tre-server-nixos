@@ -26,7 +26,7 @@ module.exports = function(argv, cb) {
           host: conf.host,
           port: conf.port,
           scope: conf.fqdn ? "public" : "local",
-          extern: conf.fqdn,
+          external: conf.fqdn,
           transform: "shs"
         }] : [],
     
