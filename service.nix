@@ -69,6 +69,8 @@ in with lib; {
           NotifyAccess = "all"; # tre-server is a child of bash
           TimeoutStartSec="180min";
           ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts} ${keyOpts}\"";
+          Restart = "always";
+
           WorkingDirectory = "/tmp";
           LoadCredentialEncrypted = "${name}:${credsPath name}";
           StandardOutput = "journal";
