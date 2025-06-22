@@ -8,6 +8,7 @@ module.exports = function(config) {
     .use(require('ssb-conn'))
     .use(require('ssb-replicate'))
     .use(require('ssb-friends'))
+    .use(require('ssb-private'))
     .use(require('ssb-blobs'))
     .use(require('ssb-invite'))
     .use(require('ssb-lan'))
