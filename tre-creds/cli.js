@@ -5,7 +5,7 @@ const {generate} = require('ssb-keys')
 const conf = require('rc')('tre_creds')
 
 if (conf._.length < 1) {
-  console.error(`Usage: tre-creds NETWORK_NAME [--caps NETWORK_CAPS] [--keys SECRET_KEYFILE] --authority --print`)
+  console.error(`Usage: tre-creds NETWORK_NAME [--caps NETWORK_CAPS] [--keys SECRET_KEYFILE] [--new-keys] --authority --print`)
   process.exit(1)
 }
 const [name] = conf._

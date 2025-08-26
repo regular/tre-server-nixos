@@ -10,13 +10,17 @@
       url = "github:regular/initial-states";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tre-generate-keypairs = {
+      url = "github:regular/generate-ed25519-keypair-nixos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     tre-cli-tools-nixos = {
       url = "github:regular/tre-cli-tools-nixos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, systems, secrets, initial-states, nixpkgs, ... }@inputs: let
+  outputs = { self, systems, nixpkgs, ... }@inputs: let
     eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f {
       inherit system;
       pkgs = nixpkgs.legacyPackages.${system};
@@ -31,18 +35,24 @@
     };
     nixosConfigurations.demo = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [
+      modules = with inputs; [
         self.nixosModules.default
         secrets.nixosModules.default
         initial-states.nixosModules.default
+        tre-generate-keypairs.nixosModules.default
         {
           services.tre-server.demo = {
             enable = true;
-            tcp.port = 1;
-            tcp.host = "local";
-            tcp.fqdn = "pub.example.com";
-            http.port = 2;
-            http.host = "none";
+            useGeneratedKeys = true;
+            tcp ={
+              port = 1;
+              host = "local";
+              fqdn = "pub.example.com";
+            };
+            http = {
+              port = 2;
+              host = "none";
+            };
             allowedUsers = [ "demo-user" ];
             authorizedKeys."@/nvJmHAkcuDSMP0bEjnCyWKFKk7rcvApVGTp4WnjaOs=.ed25519" = [
               "manifest"
@@ -57,11 +67,14 @@
             };
           };
           initial-states.tre-server-demo = {
+            requiredFiles = [];
+            /*
             source = {
               vault = "TestVault";
               item = "ssb/demo";
               field = "initial-state";
             };
+            */
           };
         }
       ];

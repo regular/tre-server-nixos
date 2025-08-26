@@ -57,7 +57,8 @@
         "nixpkgs": "nixpkgs",
         "secrets": "secrets",
         "systems": "systems",
-        "tre-cli-tools-nixos": "tre-cli-tools-nixos"
+        "tre-cli-tools-nixos": "tre-cli-tools-nixos",
+        "tre-generate-keypairs": "tre-generate-keypairs"
       }
     },
     "rust-overlay": {
@@ -174,6 +175,26 @@
       "original": {
         "owner": "regular",
         "repo": "tre-cli-tools-nixos",
+        "type": "github"
+      }
+    },
+    "tre-generate-keypairs": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1756214357,
+        "narHash": "sha256-01Ertc46AGhfuDbRyR+vUC7+UNnNPSzh6/IWEhHAvoE=",
+        "owner": "regular",
+        "repo": "generate-ed25519-keypair-nixos",
+        "rev": "111c6ee6732ffe62a05e16baa7c09b8a62b255fe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "regular",
+        "repo": "generate-ed25519-keypair-nixos",
         "type": "github"
       }
     }

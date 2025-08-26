@@ -12,9 +12,12 @@ let
   attrs = config.services.tre-server;
   enabled_server_names = builtins.filter (name: attrs.${name}.enable) (lib.attrNames attrs);
   servers = builtins.foldl' (acc: x: (acc // { ${x} = attrs.${x}; }) ) {} enabled_server_names;
+  needsKeyGenerator = builtins.foldl' (acc: x: (acc || attrs.${x}.useGeneratedKeys ) ) false enabled_server_names;
 
 in with lib; {
-  config =  mkIf ((length enabled_server_names) != 0) {
+  config = mkIf ((length enabled_server_names) != 0) {
+
+    services.tre-generate-keypairs = mkIf needsKeyGenerator { enable = true; };
 
     secrets = mapAttrs' (name: cfg: {
       name = "tre-server-${name}";
@@ -51,6 +54,8 @@ in with lib; {
       keys = builtins.attrNames cfg.authorizedKeys;
       keyOpt = key: "--authorizedKeys '${key}:" + (allowedMethods key) + "'";
       keyOpts = builtins.concatStringsSep " " (map keyOpt keys);
+    
+      generatedKeysOpts = if cfg.useGeneratedKeys then "--config %d/server" else "";
     in {
       name = "tre-server-${name}";
       value = {
@@ -68,11 +73,14 @@ in with lib; {
           Type = "notify";
           NotifyAccess = "all"; # tre-server is a child of bash
           TimeoutStartSec="180min";
-          ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts} ${keyOpts}\"";
+          ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts} ${keyOpts} ${generatedKeysOpts}\"";
           Restart = "always";
 
           WorkingDirectory = "/tmp";
-          LoadCredentialEncrypted = "${name}:${credsPath name}";
+          LoadCredentialEncrypted = [ "${name}:${credsPath name}" ] ++
+            (if cfg.useGeneratedKeys then [
+              "server:/run/tre-keypairs-provider.sock"
+            ] else []);
           StandardOutput = "journal";
           StandardError = "journal";
 

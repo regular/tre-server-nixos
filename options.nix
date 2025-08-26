@@ -22,6 +22,12 @@ let
         #  (builtins.attrNames value);
       };
 
+      useGeneratedKeys = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Whether to use an automatically generated, device-specific ssb keypair. This also fully authorizes a session key, for browsers. (requires tre-generate-keypairs service)";
+      };
+
       package = mkOption {
         type = types.package;
         default = self.packages.${pkgs.stdenv.system}.default;
