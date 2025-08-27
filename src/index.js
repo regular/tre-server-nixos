@@ -17,7 +17,7 @@ module.exports = function(argv, cb) {
 
     if (conf.network && !conf.caps) {
       conf.caps = {
-        shs: conf.network.replace('*','').split('.').slice(-1)[0]
+        shs: conf.network.replace('*','').split('.')[0]
       }
     }
 
