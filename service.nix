@@ -77,8 +77,8 @@ in with lib; {
           Restart = "always";
 
           WorkingDirectory = "/tmp";
-          LoadCredentialEncrypted = [ "${name}:${credsPath name}" ] ++
-            (if cfg.useGeneratedKeys then [
+          LoadCredentialEncrypted = [ "${name}:${credsPath name}" ];
+          LoadCredential = (if cfg.useGeneratedKeys then [
               "server:/run/tre-keypairs-provider.sock"
             ] else []);
           StandardOutput = "journal";
