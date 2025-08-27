@@ -36,7 +36,11 @@ async function main(argv) {
 
   try {
     const result = await commands[command](argv)
-    console.log(inspect(result, {color: true, depth: 10}))
+    if (typeof result == 'string') {
+      console.log(result)
+    } else {
+      console.log(inspect(result, {color: true, depth: 10}))
+    }
   } catch(err) {
     bail_if(err)
   } finally {

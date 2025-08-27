@@ -18,7 +18,8 @@ module.exports = function makeCommands(argv, ssb, ssb_config) {
     help: promisify(ssb.help),
     status: promisify(ssb.status),
     progress: promisify(ssb.progress),
-    version: promisify(ssb.version)
+    version: promisify(ssb.version),
+    booturl: promisify(ssb.treBoot.url)
   }
 
   async function types() {
