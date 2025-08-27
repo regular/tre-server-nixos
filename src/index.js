@@ -1,6 +1,6 @@
 const fs = require('fs')
 const {join} = require('path')
-const merge = require('lodash.merge')
+const merge = require('deep-extend')
 const debug = require('debug')('tre-server:index')
 const ssbKeys = require('ssb-keys')
 const rc = require('rc')
@@ -52,10 +52,6 @@ module.exports = function(argv, cb) {
 
 // -- utils
 
-//function mixinDefaults(conf) {
-//  return merge({}, JSON.parse(fs.readFileSync(join(__dirname, 'default-config.json'))), conf || {})
-//}
-      
 function getConfig(cb) {
   let conf = rc('tre-server')
   //const keys = conf.keys
@@ -66,12 +62,31 @@ function getConfig(cb) {
     return cb(new Error('No keys specified.'))
   }
 
-  //conf.path = conf.path || join(conf.config, '../.tre')
-  //conf = mixinDefaults(conf)
-  //debug('Conf from mixinDefaults: %s', JSON.stringify(conf, null, 2))
-  //netDefaults(conf, (err, conf)=>{
-    //if (err) return cb(err)
-    //conf.keys = keys
-    cb(null, conf)
-  //})
+  const SEC = 1000
+  const MIN = SEC * 60
+
+  const baseDefaults = {
+    party: true,
+    timeout: 0,
+    pub: true,
+    local: true,
+    friends: {
+      dunbar: 150,
+      hops: 2
+    },
+    gossip: {
+      connections: 3
+    },
+    timers: {
+      connection: 0,
+      reconnect: 5 * SEC,
+      ping: 2 * MIN,
+      handshake: 5 * SEC
+    },
+    logging: { level: 'notice' }
+  }
+
+  conf = merge(baseDefaults, conf || {})
+
+  cb(null, conf)
 }
