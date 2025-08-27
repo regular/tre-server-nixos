@@ -165,11 +165,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1756298156,
-        "narHash": "sha256-nnuUwarATHiH5Z8anz9QqGFal9KfR+O81NlDXW3VUaE=",
+        "lastModified": 1756301257,
+        "narHash": "sha256-op56JWf/h5s3PIePlbDBO4/Goljl8PKD/mcXhoPGSFc=",
         "owner": "regular",
         "repo": "tre-cli-tools-nixos",
-        "rev": "a677e1cc467f4da239f7bd512444d3f104775f2a",
+        "rev": "0389de2f0eb751c5b7fc2efd8d2944f954eb33c2",
         "type": "github"
       },
       "original": {
