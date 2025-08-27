@@ -15,6 +15,12 @@ module.exports = function(argv, cb) {
     const keys = conf.keys 
     delete conf.keys
 
+    if (conf.network && !conf.caps) {
+      conf.caps = {
+        shs: conf.network.replace('*','').split('.').slice(-1)[0]
+      }
+    }
+
     conf.ws = conf.ws || {}
 
     conf.connections = {
@@ -35,7 +41,7 @@ module.exports = function(argv, cb) {
       }
     }
 
-    //debug('Config is: %s', JSON.stringify(conf, null, 2))
+    debug('Config is: %s', JSON.stringify(conf, null, 2))
     debug('sbot id: %s', keys.id)
     Sbot(conf, keys, (err, ssb) =>{
       if (err) return cb(err)
