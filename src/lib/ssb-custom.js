@@ -3,6 +3,10 @@ const debug = require('debug')('tre-server:custom')
 module.exports = function(createSbot) {
   return createSbot
     .use({
+      manifest: {getAddress: "sync"},
+      init: ssb => ({getAddress: scope => ssb.multiserver.address(scope)})
+    })
+    .use({
       init: ssk => {
         const Unix = require('multiserver/plugins/unix-socket')
         ssk.multiserver.transport({
