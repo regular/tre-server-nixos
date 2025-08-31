@@ -13,6 +13,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "sd-notify-lite": "^1.0.1"
+    "sd-notify-lite": "^1.0.1",
+    "ssb-autofollow": "^1.1.0",
+    "ssb-autoinvite": "^1.2.1",
+    "ssb-autoname": "^1.2.1"
   }
 }
