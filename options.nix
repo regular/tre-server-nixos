@@ -37,10 +37,10 @@ let
 
       tcp = {
         host = mkOption {
-          type = types.str;
+          type = types.nullOr types.str;
           default = "127.0.0.1";
           defaultText = "127.0.0.1";
-          description = "TCP host/address to bind to";
+          description = "TCP host/address to bind to. If null, will pick one automaticaly";
         };
 
         fqdn = mkOption {

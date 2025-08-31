@@ -1,5 +1,6 @@
 self: { config, lib, pkgs, ... }: 
 let
+  autoIP = "$(${pkgs.iproute2}/bin/ip route get 1.1.1.1 | ${pkgs.gawk}/bin/awk '{print $7; exit}')";
   credsPath = name: "/etc/tre-creds/${name}";
   runtimePath = name: "tre-server/${name}";
   rpcSocketPath = name: "/var/run/${runtimePath name}"; # NOTE: no filename
@@ -41,7 +42,7 @@ in with lib; {
 
     systemd.services = mapAttrs' (name: cfg: let
       globalOpts = "--config %d/${name} --appname ${name} --path $STATE_DIRECTORY/ssb --socketPath ${rpcSocketPath name}";
-      tcpOpts = "--host ${cfg.tcp.host} --port ${toString cfg.tcp.port}" + optionalString (cfg.tcp.fqdn != null) " --fqdn ${cfg.tcp.fqdn}"; 
+      tcpOpts = "--host ${if cfg.tcp.host == null then "${autoIP}" else cfg.tcp.host} --port ${toString cfg.tcp.port}" + optionalString (cfg.tcp.fqdn != null) " --fqdn ${cfg.tcp.fqdn}"; 
       wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
       blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
       group = "ssb-${name}";

@@ -46,7 +46,8 @@
             useGeneratedKeys = true;
             tcp ={
               port = 1;
-              host = "local";
+              #host = "local";
+              host = null;
               fqdn = "pub.example.com";
             };
             http = {
