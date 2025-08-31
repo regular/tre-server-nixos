@@ -44,6 +44,7 @@
           services.tre-server.demo = {
             enable = true;
             useGeneratedKeys = true;
+            autoname = "my node";
             tcp ={
               port = 1;
               #host = "local";

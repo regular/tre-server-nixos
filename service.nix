@@ -97,7 +97,7 @@ in with lib; {
           StateDirectory = "tre-server/${name}";
           Environment = [
             "DEBUG=multiserver*,tre-server:*"
-          ];
+          ] ++ (if cfg.autoname == null then [] else ["HOST=${cfg.autoname}"]);
         };
       };
     }) servers;

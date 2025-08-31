@@ -7,6 +7,13 @@ let
     options = {
       enable = mkEnableOption "ssb/tre pub server (sbot)";
 
+      autoname = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        defaultText = "null";
+        description = "If set, will auto-publish an about message with this name";
+      };
+
       allowedUsers = mkOption {
         type = types.listOf types.str;
         default = [ "root" ];
