@@ -15,7 +15,10 @@ module.exports = function (server, conf) {
     const prio = journaldPriorityFromSSBLevel(level)
     return function (ary) {
       let [plug, id, verb, ...data] = ary
-      const message = data.length == 1 ? data[0] : JSON.stringify(data)
+      if (data.length == 0) data = ''
+      else data = data.length == 1 ? data[0] : JSON.stringify(data)
+
+      const message = `${plug} ${verb} ${data}`
 
       journal[prio](message, {
         SSB_PLUGIN: plug,
