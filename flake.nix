@@ -93,9 +93,15 @@
         makeCacheWritable = true;
         npmFlags = [ "--omit=dev" "--omit=optional"];
 
-        npmDepsHash = "sha256-SkrpAZbEZIuSA8dVs7F5VASAPBDSJvYT1MQYDVoJ3BU=";
+        npmDepsHash = "sha256-jKmvjX7lG2c9JSbbPFQM/dd/NL0sVXEToKsjf+pQ1LA=";
 
         src = ./src;
+
+        buildInputs = with pkgs; [ 
+          systemd
+          python3
+          pkg-config
+        ];
 
         postBuild = ''
           mkdir -p $out/lib/node_modules/${pname}
@@ -165,10 +171,12 @@
 
     devShells = eachSystem ( { pkgs, system, ... }: {
       default = pkgs.mkShell {
-        buildInputs = [
-          pkgs.nodejs
-          pkgs.python3
-          pkgs.typescript
+        buildInputs = with pkgs; [
+          nodejs
+          python3
+          typescript
+          systemd
+          pkg-config
         ];
       };
     });
