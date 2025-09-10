@@ -6,7 +6,7 @@ module.exports = function(config, keys, cb) {
 
   createSbot(config, keys, (err, ssb) => {
     if (err) return cb(err)
-    const {notice} = Log(eeb, 'tre-server')
+    const {notice} = Log(ssb, 'tre-server')
     //debug('sbot manifest %O', ssb.getManifest())
     notice(`public key ${keys.id}`)
     debug(`network key ${config.caps.shs}`)
