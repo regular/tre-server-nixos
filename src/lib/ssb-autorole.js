@@ -18,7 +18,7 @@ exports.init = function (ssb, config) {
           keys: false
         }),
         pull.asyncMap( (value, cb) => {
-          const {content{ = value
+          const {content} = value
           if (content?.type == 'role' && content?.about == feed.id ) {
             if (role == content?.station) {
               notice(`Already has role: ${role}`)
