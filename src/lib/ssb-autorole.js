@@ -9,7 +9,7 @@ exports.init = function (ssb, config) {
   const {error, warning, notice, info} = Log(ssb, exports.name)
   let role = config?.autorole
   if (role) {
-    let found = falsee
+    let found = false
     ssb.whoami( (err, feed) => {
       if (err) throw err
       pull(
