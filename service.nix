@@ -45,7 +45,7 @@ in with lib; {
       tcpOpts = "--host ${if cfg.tcp.host == null then "${autoIP}" else cfg.tcp.host} --port ${toString cfg.tcp.port}" + optionalString (cfg.tcp.fqdn != null) " --fqdn ${cfg.tcp.fqdn}"; 
       wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
       blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
-      autoOpts = if cfg.autorole != null then "--autorole '${cfg.autorole}'" else "";
+      autoOpts = if cfg.autorole != null then "--autorole '%${cfg.autorole}'" else "";
       group = "ssb-${name}";
       
       requiresFiles = (builtins.length config.initial-states."tre-server-${name}".requiredFiles) != 0;

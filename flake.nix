@@ -45,6 +45,7 @@
             enable = true;
             useGeneratedKeys = true;
             autoname = "my node";
+            autorole = "%myrole";
             tcp ={
               port = 1;
               #host = "local";
