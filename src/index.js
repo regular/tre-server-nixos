@@ -83,7 +83,7 @@ function getConfig(cb) {
       ping: 2 * MIN,
       handshake: 5 * SEC
     },
-    logging: { level: 'notice' },
+    logging: { level: 'info' },
     lan: {
       legacy: false
     },

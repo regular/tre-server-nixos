@@ -6,6 +6,8 @@ const {join} = require('path')
 const sdNotify = require('sd-notify-lite')
 //const journal = new (require('systemd-journald'))({syslog_identifier: 'tre-server'})
 
+const Log = require('./lib/log')
+
 const argv = require('minimist')(process.argv.slice(2))
 if (!process.env.DEBUG && argv._.length == 0) {
   process.env.DEBUG='multiserver*,tre-server:*'
@@ -41,7 +43,8 @@ if (argv._.length > 0) {
       process.exit(1)
     }
     const address = ssb.getAddress('device')
-    debug(`server started at ${address}`)
+    const {notice} = Log(ssb, 'tre-server')
+    notice(`server started at ${address}`)
 
     function exit(err0) {
       if (err0) console.error(err0.message)
