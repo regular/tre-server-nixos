@@ -14,6 +14,13 @@ let
         description = "If set, will auto-publish an about message with this name";
       };
 
+      autorole = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        defaultText = "null";
+        description = "If set, will auto-publish an abot message with this role";
+      };
+
       allowedUsers = mkOption {
         type = types.listOf types.str;
         default = [ "root" ];

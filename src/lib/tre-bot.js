@@ -18,6 +18,7 @@ module.exports = function(config) {
     //.use(require('ssb-ooo'))
     //.use(require('ssb-logging'))
     .use(require('./ssb-journald'))
+    .use(require('./ssb-autorole'))
     .use(require('ssb-query'))
     .use(require('ssb-links'))
     .use(require('ssb-ws'))

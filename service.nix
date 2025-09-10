@@ -45,6 +45,7 @@ in with lib; {
       tcpOpts = "--host ${if cfg.tcp.host == null then "${autoIP}" else cfg.tcp.host} --port ${toString cfg.tcp.port}" + optionalString (cfg.tcp.fqdn != null) " --fqdn ${cfg.tcp.fqdn}"; 
       wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
       blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
+      autoOpts = if cfg.autorole then "--autorole '${cfg.autorole}'" else "";
       group = "ssb-${name}";
       
       requiresFiles = (builtins.length config.initial-states."tre-server-${name}".requiredFiles) != 0;
@@ -74,7 +75,7 @@ in with lib; {
           Type = "notify";
           NotifyAccess = "all"; # tre-server is a child of bash
           TimeoutStartSec="180min";
-          ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts} ${keyOpts} ${generatedKeysOpts}\"";
+          ExecStart = "${pkgs.bash}/bin/bash -eu -c \"${ExecReceiveInitState} ${cfg.package}/bin/tre-server ${globalOpts} ${tcpOpts} ${wsOpts} ${blobsOpts} ${autoOpts} ${keyOpts} ${generatedKeysOpts}\"";
           Restart = "always";
 
           WorkingDirectory = "/tmp";
