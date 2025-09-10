@@ -9,6 +9,7 @@ exports.init = function (ssb, config) {
   const {error, warning, notice, info} = Log(ssb, exports.name)
   let role = config?.autorole
   if (role) {
+    let found = falsee
     ssb.whoami( (err, feed) => {
       if (err) throw err
       pull(
@@ -22,6 +23,7 @@ exports.init = function (ssb, config) {
           if (content?.type == 'role' && content?.about == feed.id ) {
             if (role == content?.station) {
               notice(`Already has role: ${role}`)
+              found = true
               return cb(true)
             }
           }
@@ -29,6 +31,7 @@ exports.init = function (ssb, config) {
         }),
         pull.onEnd( err => {
           if (err) throw err
+          if (found) return
           pull(
             pull.values([role]),
             pull.map( station => {
