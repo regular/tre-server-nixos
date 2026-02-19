@@ -50,6 +50,11 @@ let
       };
 
       tcp = {
+        enable = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Listen for incoming tcp connections";
+        };
         host = mkOption {
           type = types.nullOr types.str;
           default = "127.0.0.1";
@@ -71,6 +76,11 @@ let
       };
 
       http = {
+        enable = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Start integrated http server with muxrpc via websockets support";
+        };
         host = mkOption {
           type = types.str;
           default = "127.0.0.1";

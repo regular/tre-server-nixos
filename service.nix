@@ -42,8 +42,8 @@ in with lib; {
 
     systemd.services = mapAttrs' (name: cfg: let
       globalOpts = "--config %d/${name} --appname ${name} --path $STATE_DIRECTORY/ssb --socketPath ${rpcSocketPath name}";
-      tcpOpts = "--host ${if cfg.tcp.host == null then "${autoIP}" else cfg.tcp.host} --port ${toString cfg.tcp.port}" + optionalString (cfg.tcp.fqdn != null) " --fqdn ${cfg.tcp.fqdn}"; 
-      wsOpts = "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}";
+      tcpOpts = if cfg.tcp.enable then "--host ${if cfg.tcp.host == null then "${autoIP}" else cfg.tcp.host} --port ${toString cfg.tcp.port}" + optionalString (cfg.tcp.fqdn != null) " --fqdn ${cfg.tcp.fqdn}" else ""; 
+      wsOpts = if cfg.http.enable then "--ws.host ${cfg.http.host} --ws.port ${toString cfg.http.port}" else "";
       blobsOpts = "--blobs.sympathy ${toString cfg.blobs.sympathy} --blobs.max ${toString cfg.blobs.max}";
       autoOpts = if cfg.autorole != null then "--autorole '%${cfg.autorole}'" else "";
       group = "ssb-${name}";

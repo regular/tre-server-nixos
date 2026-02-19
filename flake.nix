@@ -53,6 +53,7 @@
               fqdn = "pub.example.com";
             };
             http = {
+              enable = false;
               port = 2;
               host = "none";
             };
