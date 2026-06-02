@@ -90,6 +90,7 @@
       default = pkgs.buildNpmPackage rec {
         version = cli-tools.version;
         pname = "tre-server";
+        nodejs = pkgs.nodejs_22;
 
         dontNpmBuild = true;
         makeCacheWritable = true;
@@ -123,6 +124,7 @@
       trectl = pkgs.buildNpmPackage rec {
         pname = "trectl";
         name = pname;
+        nodejs = pkgs.nodejs_22;
 
         src = ./trectl;
 
@@ -149,6 +151,7 @@
       tre-creds = pkgs.buildNpmPackage rec {
         pname = "tre-creds";
         name = pname;
+        nodejs = pkgs.nodejs_22;
 
         src = ./tre-creds;
 
