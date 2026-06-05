@@ -24,6 +24,7 @@
     eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f {
       inherit system;
       pkgs = nixpkgs.legacyPackages.${system};
+      lib = nixpkgs.lib;
     });
   in {
     nixosModules.default = {
@@ -83,14 +84,15 @@
         }
       ];
     };
-    packages = eachSystem ( { pkgs, system }: let 
+    packages = eachSystem ( { pkgs, system, lib }: let 
       cli-tools = inputs.tre-cli-tools-nixos.packages.${system}.default;
       extraModulePath = "${cli-tools}/lib/node_modules/tre-cli-tools/node_modules";
+      nodejs = pkgs.nodejs_22;
     in {
       default = pkgs.buildNpmPackage rec {
+        inherit nodejs;
         version = cli-tools.version;
         pname = "tre-server";
-        nodejs = pkgs.nodejs_22;
 
         dontNpmBuild = true;
         makeCacheWritable = true;
@@ -114,6 +116,11 @@
           EOF
         '';
 
+        postInstall = ''
+          wrapProgram $out/bin/${pname} \
+          --prefix PATH : ${lib.makeBinPath [ nodejs ]}
+        '';
+
         meta = {
           description = "tre-cli-server from tre-cli-tools patched for use within systemd";
           license = pkgs.lib.licenses.mit;
@@ -121,10 +128,11 @@
           maintainers = [ "jan@lagomorph.de" ];
         };
       };
+
       trectl = pkgs.buildNpmPackage rec {
+        inherit nodejs;
         pname = "trectl";
         name = pname;
-        nodejs = pkgs.nodejs_22;
 
         src = ./trectl;
 
@@ -141,6 +149,11 @@
           EOF
         '';
 
+        postInstall = ''
+          wrapProgram $out/bin/${pname} \
+          --prefix PATH : ${lib.makeBinPath [ nodejs ]}
+        '';
+
         meta = {
           description = "diagnose tre-server issues (WIP)";
           license = pkgs.lib.licenses.mit;
@@ -148,10 +161,11 @@
           maintainers = [ "jan@lagomorph.de" ];
         };
       };
+
       tre-creds = pkgs.buildNpmPackage rec {
+        inherit nodejs;
         pname = "tre-creds";
         name = pname;
-        nodejs = pkgs.nodejs_22;
 
         src = ./tre-creds;
 
@@ -162,6 +176,7 @@
 
         postInstall = ''
           wrapProgram $out/bin/${pname} \
+          --prefix PATH : ${lib.makeBinPath [ nodejs ]} \
           --set SYSTEMD_CREDS ${pkgs.systemd}/bin/systemd-creds
           '';
 
@@ -177,7 +192,7 @@
     devShells = eachSystem ( { pkgs, system, ... }: {
       default = pkgs.mkShell {
         buildInputs = with pkgs; [
-          nodejs
+          nodejs_22
           python3
           typescript
           systemd

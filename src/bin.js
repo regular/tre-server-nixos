@@ -1,4 +1,3 @@
-#!/usr/bin/node
 require('./extra-modules-path')
 
 const fs = require('fs')
