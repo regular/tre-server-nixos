@@ -116,11 +116,6 @@
           EOF
         '';
 
-        postInstall = ''
-          wrapProgram $out/bin/${pname} \
-          --prefix PATH : ${lib.makeBinPath [ nodejs ]}
-        '';
-
         meta = {
           description = "tre-cli-server from tre-cli-tools patched for use within systemd";
           license = pkgs.lib.licenses.mit;
